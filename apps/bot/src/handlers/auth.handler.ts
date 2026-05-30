@@ -2,7 +2,6 @@ import { Context } from 'telegraf';
 import { userService } from '../services/user.service';
 import { sessionManager } from '../middlewares/session.middleware';
 import { mainMenuKeyboard } from '../keyboards/user.keyboard';
-import { notificationService } from '../services/notification.service';
 
 export class AuthHandler {
   private notificationService: any;

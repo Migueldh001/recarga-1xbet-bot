@@ -1,14 +1,25 @@
 {
+  "name": "recarga-1xbet",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node dist/apps/bot/main.js",
+    "build": "nx build bot",
+    "dev": "tsx apps/bot/src/main.ts"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.106.2",
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.4.2",
-    "telegraf": "^4.16.3"
+    "@supabase/supabase-js": "^2.39.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "telegraf": "^4.15.0",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/node": "^25.9.1",
-    "nx": "22.7.5",
-    "tsx": "^4.22.3"
+    "@nx/js": "^22.7.5",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.10.0",
+    "nx": "latest",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
   }
 }
