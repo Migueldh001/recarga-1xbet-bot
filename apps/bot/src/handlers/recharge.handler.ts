@@ -3,7 +3,7 @@ import { userService } from '../services/user.service';
 import { rechargeService } from '../services/recharge.service';
 import { settingsService } from '../services/settings.service';
 import { sessionManager } from '../middlewares/session.middleware';
-import { mainMenuKeyboard, backKeyboard } from '../keyboards/user.keyboard';
+import { mainMenuKeyboard, backKeyboard, quickAmountsKeyboard } from '../keyboards/user.keyboard';
 import { Message } from 'telegraf/types';
 
 export class RechargeHandler {
@@ -30,8 +30,8 @@ export class RechargeHandler {
       `💳 *Nueva Recarga*\n\n` +
       `💰 Monto mínimo: $${minRecharge} USD\n` +
       `💰 Monto máximo: $${maxRecharge} USD\n\n` +
-      `¿Cuánto deseas recargar? (en USD)`,
-      { parse_mode: 'Markdown', ...backKeyboard() }
+      `Selecciona un monto o ingresa uno personalizado:`,
+      { parse_mode: 'Markdown', ...quickAmountsKeyboard() }
     );
 
     await sessionManager.setStep(telegramId, 'RECHARGE_AWAITING_AMOUNT');
@@ -47,10 +47,23 @@ export class RechargeHandler {
       return;
     }
 
+    if (amountText.startsWith('💵 $')) {
+      amountText = amountText.replace('💵 $', '');
+    }
+
+    if (amountText === '✏️ Otro monto') {
+      await ctx.reply(
+        '✏️ *Monto personalizado*\n\n' +
+        'Ingresa el monto que deseas recargar (en USD):',
+        { parse_mode: 'Markdown', ...backKeyboard() }
+      );
+      return;
+    }
+
     const amount = parseFloat(amountText);
 
     if (isNaN(amount) || amount <= 0) {
-      await ctx.reply('⚠️ Por favor ingresa un monto válido.');
+      await ctx.reply('⚠️ Por favor ingresa un monto válido o selecciona uno de los botones.');
       return;
     }
 
@@ -89,7 +102,7 @@ export class RechargeHandler {
       `🏦 Cuenta bancaria: \`${bankAccount}\`\n` +
       `📞 Número a confirmar: \`${confirmationPhone}\`\n\n` +
       `📋 *Instrucciones:*\n` +
-      `1️⃣ Realiza la transferencia\n` +
+      `1️⃣ Realiza la transferencia desde Transfermóvil\n` +
       `2️⃣ Toma captura de pantalla del comprobante\n` +
       `3️⃣ Envía la captura por aquí\n\n` +
       `_Toca los datos para copiarlos_`;

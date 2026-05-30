@@ -27,3 +27,19 @@ export const rechargeStatusKeyboard = () => {
     ['🔙 Volver al Menú'],
   ]).resize();
 };
+
+export const quickAmountsKeyboard = () => {
+  return Markup.keyboard([
+    ['💵 $5', '💵 $10', '💵 $20'],
+    ['💵 $50', '💵 $75', '💵 $100'],
+    ['✏️ Otro monto', '🔙 Volver al Menú'],
+  ]).resize();
+};
+
+export const settingsMenuKeyboard = () => {
+  return Markup.keyboard([
+    ['🎰 Cambiar ID 1xBet'],
+    ['🔐 Cambiar Contraseña'],
+    ['🔙 Volver al Menú'],
+  ]).resize();
+};
