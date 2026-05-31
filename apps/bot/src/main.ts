@@ -26,6 +26,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
       import('./handlers/menu.handler.js').then(({ menuHandler }) => {
         import('./handlers/admin.handler.js').then(({ adminHandler }) => {
   import('./handlers/admin-config.handler.js').then(({ adminConfigHandler }) => {
+  import('./handlers/admin-contact.handler.js').then(({ adminContactHandler }) => {
     import('./middlewares/session.middleware.js').then(({ sessionManager }) => {
       import('./services/notification.service.js').then(({ NotificationService }) => {
         import('./services/user.service.js').then(({ userService }) => {
