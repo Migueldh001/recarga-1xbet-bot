@@ -58,7 +58,11 @@ export class SettingsService {
     const whatsapp = await this.getSetting('contact_whatsapp');
     const phone = await this.getSetting('contact_phone');
 
-    return { telegram, whatsapp, phone };
+    return { 
+      telegram: telegram || undefined, 
+      whatsapp: whatsapp || undefined, 
+      phone: phone || undefined 
+    };
   }
 
   async calculateTransferAmount(amountUSD: number): Promise<number> {
