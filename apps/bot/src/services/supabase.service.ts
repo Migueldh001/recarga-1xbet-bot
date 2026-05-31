@@ -14,6 +14,10 @@ export class SupabaseService {
     const anonKey = process.env.SUPABASE_ANON_KEY!;
     const serviceKey = process.env.SUPABASE_SERVICE_KEY!;
 
+    if (!url || !anonKey || !serviceKey) {
+      throw new Error('Faltan variables de entorno de Supabase');
+    }
+
     this.client = createClient(url, anonKey);
     this.adminClient = createClient(url, serviceKey);
   }
