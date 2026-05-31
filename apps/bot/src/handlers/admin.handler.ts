@@ -108,12 +108,17 @@ export class AdminHandler {
     }
 
     await ctx.answerCbQuery('✅ Recarga aprobada');
-    await ctx.editMessageCaption(
-      `✅ *APROBADA*\n\n` +
-      `💰 Monto: $${recharge.amount.toFixed(2)} USD\n` +
-      `🎰 ID 1xBet: ${recharge.bet_id}`,
-      { parse_mode: 'Markdown' }
-    );
+    
+    try {
+      await ctx.editMessageCaption(
+        `✅ *APROBADA*\n\n` +
+        `💰 Monto: $${recharge.amount.toFixed(2)} USD\n` +
+        `🎰 ID 1xBet: ${recharge.bet_id}`,
+        { parse_mode: 'Markdown' }
+      );
+    } catch (error) {
+      console.error('Error editing message:', error);
+    }
   }
 
   async rejectRecharge(ctx: Context, rechargeId: string): Promise<void> {
@@ -146,12 +151,17 @@ export class AdminHandler {
     }
 
     await ctx.answerCbQuery('❌ Recarga rechazada');
-    await ctx.editMessageCaption(
-      `❌ *RECHAZADA*\n\n` +
-      `💰 Monto: $${recharge.amount.toFixed(2)} USD\n` +
-      `🎰 ID 1xBet: ${recharge.bet_id}`,
-      { parse_mode: 'Markdown' }
-    );
+    
+    try {
+      await ctx.editMessageCaption(
+        `❌ *RECHAZADA*\n\n` +
+        `💰 Monto: $${recharge.amount.toFixed(2)} USD\n` +
+        `🎰 ID 1xBet: ${recharge.bet_id}`,
+        { parse_mode: 'Markdown' }
+      );
+    } catch (error) {
+      console.error('Error editing message:', error);
+    }
   }
 
   async showAllUsers(ctx: Context): Promise<void> {
