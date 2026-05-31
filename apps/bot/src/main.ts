@@ -1,4 +1,3 @@
-cat > apps/bot/src/main.ts << 'EOF'
 import { Telegraf } from 'telegraf';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
