@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
+import ws from 'ws';
 
 dotenv.config({ path: resolve(__dirname, '../../.env') });
 
@@ -18,8 +19,21 @@ export class SupabaseService {
       throw new Error('Faltan variables de entorno de Supabase');
     }
 
-    this.client = createClient(url, anonKey);
-    this.adminClient = createClient(url, serviceKey);
+    // Configuración con WebSocket para Node.js 20
+    const supabaseOptions = {
+      auth: {
+        persistSession: false,
+      },
+      global: {
+        fetch: fetch.bind(globalThis),
+      },
+      realtime: {
+        transport: ws as any,
+      },
+    };
+
+    this.client = createClient(url, anonKey, supabaseOptions);
+    this.adminClient = createClient(url, serviceKey, supabaseOptions);
   }
 
   public static getInstance(): SupabaseService {
