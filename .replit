@@ -1,5 +1,5 @@
 entrypoint = "apps/bot/src/main.ts"
-run = "node --loader tsx apps/bot/src/main.ts"
+run = "npm start"
 
 [env]
 NODE_ENV = "production"
@@ -7,8 +7,8 @@ NODE_ENV = "production"
 [nix]
 channel = "stable-24_05"
 
-[nix.pkgs]
-pkgs = ["nodejs-20_x"]
+[nix.packages]
+nodejs = "22"
 
 [[ports]]
 localPort = 3000
