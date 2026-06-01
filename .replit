@@ -1,16 +1,7 @@
-run = "npx tsx apps/bot/src/main.ts"
-hidden = [".config", "package-lock.json"]
-modules = ["nodejs-20"]
+run = "npm start"
 
 [nix]
-channel = "stable-23_11"
+channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npx tsx apps/bot/src/main.ts"]
-deploymentTarget = "cloudrun"
-
-[languages]
-[languages.typescript]
-pattern = "**/*.ts"
-[languages.typescript.languageServer]
-start = "typescript-language-server --stdio"
+run = ["sh", "-c", "npm start"]
