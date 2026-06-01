@@ -249,8 +249,14 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                 return;
               }
 
-              if (text === '📞 Configurar Contacto') {
-                await ctx.reply('⚙️ Función en desarrollo. Próximamente...');
+               if (text === '📞 Configurar Contacto') {
+                await adminContactHandler.showContactMenu(ctx);
+                return;
+              }
+
+              // Opciones del menú de contacto
+              if (text === '📱 Telegram' || text === '💬 WhatsApp' || text === '☎️ Teléfono') {
+                await adminContactHandler.handleContactOption(ctx, text);
                 return;
               }
 
@@ -296,6 +302,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
           process.once('SIGINT', () => bot.stop('SIGINT'));
           process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
+          });
         });
       });
     });
