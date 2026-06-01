@@ -18,33 +18,27 @@ export class SupabaseService {
       throw new Error('Faltan variables de entorno de Supabase');
     }
 
-    // Importar ws dinámicamente
-    let WebSocketImpl;
-    try {
-      WebSocketImpl = require('ws');
-    } catch (e) {
-      console.warn('ws no disponible, usando WebSocket nativo');
-    }
-
-    // Configuración con WebSocket para Node.js 20
+    // Configuración sin Realtime para Node.js 20
     const supabaseOptions: any = {
       auth: {
         persistSession: false,
+        autoRefreshToken: false,
       },
       global: {
         fetch: fetch.bind(globalThis),
       },
+      db: {
+        schema: 'public',
+      },
+      realtime: {
+        disabled: true, // Deshabilitar Realtime completamente
+      },
     };
-
-    // Solo agregar transport si ws está disponible
-    if (WebSocketImpl) {
-      supabaseOptions.realtime = {
-        transport: WebSocketImpl,
-      };
-    }
 
     this.client = createClient(url, anonKey, supabaseOptions);
     this.adminClient = createClient(url, serviceKey, supabaseOptions);
+
+    console.log('✅ Supabase client inicializado (Realtime deshabilitado)');
   }
 
   public static getInstance(): SupabaseService {
