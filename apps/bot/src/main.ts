@@ -148,6 +148,22 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
               return;
             }
 
+                        // ADMIN CONTACT STEPS
+            if (step === 'ADMIN_CONTACT_TELEGRAM') {
+              await adminContactHandler.handleTelegram(ctx, text);
+              return;
+            }
+
+            if (step === 'ADMIN_CONTACT_WHATSAPP') {
+              await adminContactHandler.handleWhatsApp(ctx, text);
+              return;
+            }
+
+            if (step === 'ADMIN_CONTACT_PHONE') {
+              await adminContactHandler.handlePhone(ctx, text);
+              return;
+            }
+
             const user = await userService.findByTelegramId(telegramId);
             const isAdmin = user ? await userService.isAdmin(telegramId) : false;
 
