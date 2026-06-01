@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node dist/apps/bot/main.js",
+    "start": "npx tsx apps/bot/src/main.ts",
     "build": "nx build bot",
     "dev": "tsx apps/bot/src/main.ts"
   },
