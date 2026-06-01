@@ -8,7 +8,7 @@ NODE_ENV = "production"
 channel = "stable-24_05"
 
 [nix.packages]
-nodejs = "22"
+nodejs = "20"
 
 [[ports]]
 localPort = 3000
