@@ -1,10 +1,15 @@
-run = "npx tsx apps/bot/src/main.ts"
+entrypoint = "apps/bot/src/main.ts"
+run = "node --loader tsx apps/bot/src/main.ts"
 
 [env]
-PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin"
+NODE_ENV = "production"
 
 [nix]
 channel = "stable-24_05"
 
-[deployment]
-run = ["sh", "-c", "npx tsx apps/bot/src/main.ts"]
+[nix.pkgs]
+pkgs = ["nodejs-20_x"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
