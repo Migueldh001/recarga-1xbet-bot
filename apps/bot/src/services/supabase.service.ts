@@ -4,6 +4,9 @@ import { resolve } from 'path';
 
 dotenv.config({ path: resolve(__dirname, '../../.env') });
 
+// Importar ws
+const WebSocket = require('ws');
+
 export class SupabaseService {
   private static instance: SupabaseService;
   public client: SupabaseClient;
@@ -18,27 +21,30 @@ export class SupabaseService {
       throw new Error('Faltan variables de entorno de Supabase');
     }
 
-    // Configuración sin Realtime para Node.js 20
-    const supabaseOptions: any = {
+    const options = {
       auth: {
         persistSession: false,
-        autoRefreshToken: false,
-      },
-      global: {
-        fetch: fetch.bind(globalThis),
-      },
-      db: {
-        schema: 'public',
       },
       realtime: {
-        disabled: true, // Deshabilitar Realtime completamente
+        params: {
+          eventsPerSecond: 2,
+        },
+      },
+      global: {
+        headers: {},
       },
     };
 
-    this.client = createClient(url, anonKey, supabaseOptions);
-    this.adminClient = createClient(url, serviceKey, supabaseOptions);
+    // @ts-ignore - Añadir WebSocket manualmente
+    if (typeof globalThis.WebSocket === 'undefined') {
+      // @ts-ignore
+      globalThis.WebSocket = WebSocket;
+    }
 
-    console.log('✅ Supabase client inicializado (Realtime deshabilitado)');
+    this.client = createClient(url, anonKey, options);
+    this.adminClient = createClient(url, serviceKey, options);
+
+    console.log('✅ Supabase inicializado con ws');
   }
 
   public static getInstance(): SupabaseService {
