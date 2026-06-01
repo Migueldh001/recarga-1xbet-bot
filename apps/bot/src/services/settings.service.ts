@@ -13,44 +13,48 @@ export class SettingsService {
     return data?.value || null;
   }
 
-  async setSetting(key: string, value: string): Promise<boolean> {
-    try {
-      // Primero verificar si existe
-      const { data: existing } = await supabase
-        .from('settings')
-        .select('id')
-        .eq('key', key)
-        .single();
+async setSetting(key: string, value: string): Promise<boolean> {
+  try {
+    // Verificar si ya existe
+    const { data: existing, error: selectError } = await supabase
+      .from('settings')
+      .select('*')
+      .eq('key', key)
+      .maybeSingle();
 
-      if (existing) {
-        // Si existe, actualizar
-        const { error } = await supabase
-          .from('settings')
-          .update({ value, updated_at: new Date().toISOString() })
-          .eq('key', key);
-        
-        if (error) {
-          console.error('Error updating setting:', error);
-          return false;
-        }
-      } else {
-        // Si no existe, insertar
-        const { error } = await supabase
-          .from('settings')
-          .insert({ key, value, updated_at: new Date().toISOString() });
-        
-        if (error) {
-          console.error('Error inserting setting:', error);
-          return false;
-        }
-      }
+    console.log(`Setting ${key}: existing =`, existing, 'error =', selectError);
+
+    if (existing) {
+      // Actualizar registro existente
+      const { error } = await supabase
+        .from('settings')
+        .update({ value })
+        .eq('key', key);
       
-      return true;
-    } catch (error) {
-      console.error('Error in setSetting:', error);
-      return false;
+      if (error) {
+        console.error(`Error updating ${key}:`, error);
+        return false;
+      }
+      console.log(`✅ Updated ${key} = ${value}`);
+    } else {
+      // Insertar nuevo registro
+      const { error } = await supabase
+        .from('settings')
+        .insert({ key, value });
+      
+      if (error) {
+        console.error(`Error inserting ${key}:`, error);
+        return false;
+      }
+      console.log(`✅ Inserted ${key} = ${value}`);
     }
+    
+    return true;
+  } catch (error) {
+    console.error(`Exception in setSetting(${key}):`, error);
+    return false;
   }
+}
 
   async getExchangeRate(): Promise<number> {
     const rate = await this.getSetting('exchange_rate');
