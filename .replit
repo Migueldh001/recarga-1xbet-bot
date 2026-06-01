@@ -1,7 +1,10 @@
-run = "npm start"
+run = "npx tsx apps/bot/src/main.ts"
+
+[env]
+PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin"
 
 [nix]
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npm start"]
+run = ["sh", "-c", "npx tsx apps/bot/src/main.ts"]
