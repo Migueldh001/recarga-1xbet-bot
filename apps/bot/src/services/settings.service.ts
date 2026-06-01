@@ -14,42 +14,42 @@ export class SettingsService {
   }
 
   async setSetting(key: string, value: string): Promise<boolean> {
-  try {
-    // Primero intentar actualizar
-    const { data: existing } = await supabase
-      .from('settings')
-      .select('id')
-      .eq('key', key)
-      .single();
+    try {
+      // Primero verificar si existe
+      const { data: existing } = await supabase
+        .from('settings')
+        .select('id')
+        .eq('key', key)
+        .single();
 
-    if (existing) {
-      // Si existe, actualizar
-      const { error } = await supabase
-        .from('settings')
-        .update({ value, updated_at: new Date().toISOString() })
-        .eq('key', key);
-      
-      if (error) {
-        console.error('Error updating setting:', error);
-        return false;
+      if (existing) {
+        // Si existe, actualizar
+        const { error } = await supabase
+          .from('settings')
+          .update({ value, updated_at: new Date().toISOString() })
+          .eq('key', key);
+        
+        if (error) {
+          console.error('Error updating setting:', error);
+          return false;
+        }
+      } else {
+        // Si no existe, insertar
+        const { error } = await supabase
+          .from('settings')
+          .insert({ key, value, updated_at: new Date().toISOString() });
+        
+        if (error) {
+          console.error('Error inserting setting:', error);
+          return false;
+        }
       }
-    } else {
-      // Si no existe, insertar
-      const { error } = await supabase
-        .from('settings')
-        .insert({ key, value, updated_at: new Date().toISOString() });
       
-      if (error) {
-        console.error('Error inserting setting:', error);
-        return false;
-      }
+      return true;
+    } catch (error) {
+      console.error('Error in setSetting:', error);
+      return false;
     }
-    
-    return true;
-  } catch (error) {
-    console.error('Error in setSetting:', error);
-    return false;
-  }
   }
 
   async getExchangeRate(): Promise<number> {
