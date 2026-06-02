@@ -5,7 +5,7 @@ export const adminMenuKeyboard = (pendingCount: number = 0) => {
     [`📥 Solicitudes (${pendingCount})`],
     ['👥 Usuarios', '💱 Configurar Tasa'],
     ['📊 Estadísticas', '📞 Configurar Contacto'],
-    ['➕ Agregar Admin', '👤 Ver como Usuario'],
+    ['➕ Agregar Admin', '📢 Informar'],
   ]).resize();
 };
 
