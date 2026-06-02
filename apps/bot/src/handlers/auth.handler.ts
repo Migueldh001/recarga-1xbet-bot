@@ -10,7 +10,7 @@ export class AuthHandler {
     this.notificationService = service;
   }
 
-  // REGISTRO
+  // REGISTRO SIMPLIFICADO - SOLO ID 1xBet
   async handleRegisterBetId(ctx: Context, betId: string): Promise<void> {
     const telegramId = ctx.from?.id;
     if (!telegramId) return;
@@ -19,48 +19,15 @@ export class AuthHandler {
     if (existingUser) {
       await ctx.reply(
         `⚠️ Este ID de 1xBet ya está registrado.\n\n` +
-        `Si olvidaste tu contraseña, contacta con soporte.`
+        `Si es tuyo y quieres vincularlo, usa la opción de Iniciar Sesión.`
       );
       await sessionManager.clearSession(telegramId);
       return;
     }
 
-    await sessionManager.setTempData(telegramId, { bet_id: betId });
-    await ctx.reply(`📱 Ahora envía tu *número de teléfono*`, {
-      parse_mode: 'Markdown',
-    });
-    await sessionManager.setStep(telegramId, 'REGISTER_AWAITING_PHONE');
-  }
-
-  async handleRegisterPhone(ctx: Context, phone: string): Promise<void> {
-    const telegramId = ctx.from?.id;
-    if (!telegramId) return;
-
-    const tempData = await sessionManager.getTempData(telegramId);
-    tempData.phone = phone;
-    await sessionManager.setTempData(telegramId, tempData);
-
-    await ctx.reply(`🔐 Crea una *contraseña* para tu cuenta`, {
-      parse_mode: 'Markdown',
-    });
-    await sessionManager.setStep(telegramId, 'REGISTER_AWAITING_PASSWORD');
-  }
-
-  async handleRegisterPassword(ctx: Context, password: string): Promise<void> {
-    const telegramId = ctx.from?.id;
-    if (!telegramId) return;
-
-    if (password.length < 6) {
-      await ctx.reply(`⚠️ La contraseña debe tener al menos 6 caracteres.`);
-      return;
-    }
-
-    const tempData = await sessionManager.getTempData(telegramId);
-    
-    const user = await userService.createUser({
-      bet_id: tempData.bet_id,
-      phone: tempData.phone,
-      password: password,
+    // Crear usuario directamente solo con ID 1xBet
+    const user = await userService.createUserSimple({
+      bet_id: betId,
       telegram_id: telegramId,
     });
 
@@ -72,18 +39,19 @@ export class AuthHandler {
 
     await ctx.reply(
       `✅ *¡Registro exitoso!*\n\n` +
+      `Tu ID de 1xBet: ${betId}\n\n` +
       `Ya puedes usar el bot para hacer recargas.`,
       { parse_mode: 'Markdown', ...mainMenuKeyboard() }
     );
 
     if (this.notificationService) {
-      await this.notificationService.notifyNewUser(tempData.bet_id);
+      await this.notificationService.notifyNewUser(betId);
     }
 
     await sessionManager.clearSession(telegramId);
   }
 
-  // LOGIN
+  // LOGIN SIMPLIFICADO - SOLO ID 1xBet
   async handleLoginBetId(ctx: Context, betId: string): Promise<void> {
     const telegramId = ctx.from?.id;
     if (!telegramId) return;
@@ -98,28 +66,8 @@ export class AuthHandler {
       return;
     }
 
-    await sessionManager.setTempData(telegramId, { bet_id: betId });
-    await ctx.reply(`🔐 Envía tu *contraseña*`, { parse_mode: 'Markdown' });
-    await sessionManager.setStep(telegramId, 'LOGIN_AWAITING_PASSWORD');
-  }
-
-  async handleLoginPassword(ctx: Context, password: string): Promise<void> {
-    const telegramId = ctx.from?.id;
-    if (!telegramId) return;
-
-    const tempData = await sessionManager.getTempData(telegramId);
-    const isValid = await userService.verifyPassword(tempData.bet_id, password);
-
-    if (!isValid) {
-      await ctx.reply(
-        `❌ Contraseña incorrecta.\n\n` +
-        `Intenta nuevamente o contacta con soporte.`
-      );
-      await sessionManager.clearSession(telegramId);
-      return;
-    }
-
-    const linked = await userService.linkTelegramId(tempData.bet_id, telegramId);
+    // Vincular Telegram ID directamente
+    const linked = await userService.linkTelegramId(betId, telegramId);
     
     if (!linked) {
       await ctx.reply(`❌ Error al vincular la cuenta. Intenta nuevamente.`);
