@@ -1,15 +1,8 @@
-entrypoint = "apps/bot/src/main.ts"
 run = "npm start"
-
-[env]
-NODE_ENV = "production"
+entrypoint = "apps/bot/src/main.ts"
 
 [nix]
 channel = "stable-24_05"
 
-[nix.packages]
-nodejs = "20"
-
-[[ports]]
-localPort = 3000
-externalPort = 80
+[deployment]
+run = ["sh", "-c", "npm start"]
