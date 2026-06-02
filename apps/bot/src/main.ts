@@ -26,7 +26,8 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
           import('./handlers/admin-config.handler.js').then(({ adminConfigHandler }) => {
             import('./handlers/admin-contact.handler.js').then(({ adminContactHandler }) => {
              import('./handlers/admin-users.handler.js').then(({ adminUsersHandler }) => {
-              import('./middlewares/session.middleware.js').then(({ sessionManager }) => {
+              import('./handlers/admin-broadcast.handler.js').then(({ adminBroadcastHandler }) => {
+               import('./middlewares/session.middleware.js').then(({ sessionManager }) => {
                 import('./services/notification.service.js').then(({ NotificationService }) => {
                   import('./services/user.service.js').then(({ userService }) => {
 
@@ -53,6 +54,15 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                     bot.action(/reject_(.+)/, async (ctx) => {
                       const rechargeId = ctx.match[1];
                       await adminHandler.rejectRecharge(ctx, rechargeId);
+                    });
+
+                      // Callbacks para broadcast
+                    bot.action('broadcast_confirm', async (ctx) => {
+                      await adminBroadcastHandler.confirmBroadcast(ctx);
+                    });
+
+                    bot.action('broadcast_cancel', async (ctx) => {
+                      await adminBroadcastHandler.cancelBroadcast(ctx);
                     });
 
                     bot.on('text', async (ctx) => {
@@ -153,6 +163,22 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                         return;
                       }
 
+                       // BROADCAST STEPS
+                      if (step === 'BROADCAST_SELECT_TYPE') {
+                        await adminBroadcastHandler.handleSelectType(ctx, text);
+                        return;
+                      }
+
+                      if (step === 'BROADCAST_TEXT') {
+                        await adminBroadcastHandler.handleText(ctx, text);
+                        return;
+                      }
+
+                      if (step === 'BROADCAST_TEXT_FOR_PHOTO') {
+                        await adminBroadcastHandler.handleTextForPhoto(ctx, text);
+                        return;
+                      }
+
                       const user = await userService.findByTelegramId(telegramId);
                       const isAdmin = user ? await userService.isAdmin(telegramId) : false;
 
@@ -213,10 +239,10 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                           return;
                         }
 
-                        if (text === '👤 Ver como Usuario') {
-                          await adminHandler.viewAsUser(ctx);
+                        if (text === '📢 Informar') {
+                          await adminBroadcastHandler.startBroadcast(ctx);
                           return;
-                        }
+                       }
 
                         if (text === '💱 Configurar Tasa') {
                           await adminConfigHandler.showConfigMenu(ctx);
@@ -254,7 +280,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                       await ctx.reply('🤔 No entendí ese comando.\n\nUsa /start para ver el menú.');
                     });
 
-                    bot.on('photo', async (ctx) => {
+                     bot.on('photo', async (ctx) => {
                       const telegramId = ctx.from?.id;
                       if (!telegramId) return;
 
@@ -262,6 +288,11 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
 
                       if (step === 'RECHARGE_AWAITING_RECEIPT') {
                         await rechargeHandler.handleReceipt(ctx);
+                        return;
+                      }
+
+                      if (step === 'BROADCAST_PHOTO' || step === 'BROADCAST_PHOTO_WITH_TEXT') {
+                        await adminBroadcastHandler.handlePhoto(ctx);
                         return;
                       }
 
@@ -284,8 +315,9 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
 
                     process.once('SIGINT', () => bot.stop('SIGINT'));
                     process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
+                  
                   });
+                 });
                 });
               });
             });
