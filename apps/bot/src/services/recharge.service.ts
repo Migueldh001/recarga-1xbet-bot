@@ -3,32 +3,47 @@ import { Recharge } from '../types';
 import { settingsService } from './settings.service';
 
 export class RechargeService {
+
   async createRecharge(data: {
     user_id: string;
     bet_id: string;
     amount: number;
   }): Promise<Recharge | null> {
-    const amountTransferred = await settingsService.calculateTransferAmount(
-      data.amount
-    );
+    try {
+      const amountTransferred = await settingsService.calculateTransferAmount(
+        data.amount
+      );
 
-    const { data: recharge, error } = await supabase
-      .from('recharges')
-      .insert({
+      console.log('Creating recharge:', {
         user_id: data.user_id,
         bet_id: data.bet_id,
         amount: data.amount,
         amount_transferred: amountTransferred,
-        status: 'pending',
-      })
-      .select()
-      .single();
+      });
 
-    if (error) {
-      console.error('Error creating recharge:', error);
+      const { data: recharge, error } = await supabase
+        .from('recharges')
+        .insert({
+          user_id: data.user_id,
+          bet_id: data.bet_id,
+          amount: data.amount,
+          amount_transferred: amountTransferred,
+          status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating recharge:', error);
+        return null;
+      }
+      
+      console.log('Recharge created successfully:', recharge.id);
+      return recharge;
+    } catch (error) {
+      console.error('Exception in createRecharge:', error);
       return null;
     }
-    return recharge;
   }
 
   async uploadReceipt(
