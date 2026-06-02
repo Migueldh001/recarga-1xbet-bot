@@ -77,23 +77,8 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                         return;
                       }
 
-                      if (step === 'REGISTER_AWAITING_PHONE') {
-                        await authHandler.handleRegisterPhone(ctx, text);
-                        return;
-                      }
-
-                      if (step === 'REGISTER_AWAITING_PASSWORD') {
-                        await authHandler.handleRegisterPassword(ctx, text);
-                        return;
-                      }
-
                       if (step === 'LOGIN_AWAITING_BET_ID') {
                         await authHandler.handleLoginBetId(ctx, text);
-                        return;
-                      }
-
-                      if (step === 'LOGIN_AWAITING_PASSWORD') {
-                        await authHandler.handleLoginPassword(ctx, text);
                         return;
                       }
 
