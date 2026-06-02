@@ -25,6 +25,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
         import('./handlers/admin.handler.js').then(({ adminHandler }) => {
           import('./handlers/admin-config.handler.js').then(({ adminConfigHandler }) => {
             import('./handlers/admin-contact.handler.js').then(({ adminContactHandler }) => {
+             import('./handlers/admin-users.handler.js').then(({ adminUsersHandler }) => {
               import('./middlewares/session.middleware.js').then(({ sessionManager }) => {
                 import('./services/notification.service.js').then(({ NotificationService }) => {
                   import('./services/user.service.js').then(({ userService }) => {
@@ -156,6 +157,17 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                         return;
                       }
 
+                                            // ADMIN ADD ADMIN STEPS
+                      if (step === 'ADMIN_ADD_ADMIN_BET_ID') {
+                        await adminUsersHandler.handleAddAdminBetId(ctx, text);
+                        return;
+                      }
+
+                      if (step === 'ADMIN_ADD_ADMIN_CONFIRM') {
+                        await adminUsersHandler.handleAddAdminConfirm(ctx, text);
+                        return;
+                      }
+
                       const user = await userService.findByTelegramId(telegramId);
                       const isAdmin = user ? await userService.isAdmin(telegramId) : false;
 
@@ -249,7 +261,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
                         }
 
                         if (text === '➕ Agregar Admin') {
-                          await ctx.reply('⚙️ Función en desarrollo. Próximamente...');
+                          await adminUsersHandler.startAddAdmin(ctx);
                           return;
                         }
                       }
@@ -294,6 +306,7 @@ import('./handlers/start.handler.js').then(({ startHandler }) => {
             });
           });
         });
+       });
       });
     });
   });
