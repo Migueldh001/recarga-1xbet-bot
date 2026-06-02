@@ -1,8 +1,5 @@
 run = "npm start"
-entrypoint = "apps/bot/src/main.ts"
+language = "nodejs"
 
 [nix]
 channel = "stable-24_05"
-
-[deployment]
-run = ["sh", "-c", "npm start"]
