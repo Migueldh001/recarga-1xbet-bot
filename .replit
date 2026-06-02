@@ -1,1 +1,5 @@
 run = "npm start"
+entrypoint = "apps/bot/src/main.ts"
+
+[nix]
+channel = "stable-24_05"
