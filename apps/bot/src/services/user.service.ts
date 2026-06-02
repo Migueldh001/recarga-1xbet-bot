@@ -51,6 +51,27 @@ export class UserService {
     }
     return data;
   }
+    async createUserSimple(userData: {
+    bet_id: string;
+    telegram_id: number;
+  }): Promise<User | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        bet_id: userData.bet_id,
+        phone: 'N/A', // Por defecto
+        telegram_id: userData.telegram_id,
+        is_admin: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating user:', error);
+      return null;
+    }
+    return data;
+    }
 
   async linkTelegramId(betId: string, telegramId: number): Promise<boolean> {
     const { error } = await supabase
