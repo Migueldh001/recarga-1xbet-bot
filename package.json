@@ -6,7 +6,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "tsx apps/bot/src/main.ts",
+    "start": "node --import tsx --no-warnings apps/bot/src/main.ts",
     "dev": "tsx apps/bot/src/main.ts"
   },
   "dependencies": {
