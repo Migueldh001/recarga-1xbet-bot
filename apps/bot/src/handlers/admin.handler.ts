@@ -32,7 +32,7 @@ export class AdminHandler {
     );
   }
 
-  async showPendingRecharges(ctx: Context): Promise<void> {
+    async showPendingRecharges(ctx: Context): Promise<void> {
     const telegramId = ctx.from?.id;
     if (!telegramId) return;
 
@@ -51,12 +51,17 @@ export class AdminHandler {
     });
 
     for (const recharge of pending) {
-      const user = await userService.findByTelegramId(recharge.user_id as any);
-      const date = new Date(recharge.created_at).toLocaleDateString('es-ES');
+      const date = new Date(recharge.created_at).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
 
       let message = 
         `💰 Monto: $${recharge.amount.toFixed(2)} USD\n` +
-        `💸 Transferido: ${recharge.amount_transferred.toFixed(2)} CUP\n` +
+        `💸 A transferir: ${recharge.amount_transferred.toFixed(2)} CUP\n` +
         `🎰 ID 1xBet: ${recharge.bet_id}\n` +
         `📅 Fecha: ${date}\n` +
         `📝 ID: \`${recharge.id.substring(0, 8)}...\``;
@@ -64,19 +69,34 @@ export class AdminHandler {
       const keyboard = approveRejectKeyboard(recharge.id);
 
       if (recharge.receipt_url) {
-        await ctx.replyWithPhoto(
-          recharge.receipt_url,
-          {
-            caption: message,
-            parse_mode: 'Markdown',
+        try {
+          await ctx.replyWithPhoto(
+            recharge.receipt_url,
+            {
+              caption: message,
+              parse_mode: 'Markdown',
+              ...keyboard,
+            }
+          );
+        } catch (error) {
+          console.error('Error enviando foto:', error);
+          // Si falla enviar la foto, enviar solo el texto con link
+          message += `\n\n📸 [Ver comprobante](${recharge.receipt_url})`;
+          await ctx.reply(message, { 
+            parse_mode: 'Markdown', 
             ...keyboard,
-          }
-        );
+            disable_web_page_preview: false
+          });
+        }
       } else {
+        message += `\n\n⚠️ Sin comprobante`;
         await ctx.reply(message, { parse_mode: 'Markdown', ...keyboard });
       }
+      
+      // Pequeña pausa entre mensajes
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
-  }
+    }
 
   async approveRecharge(ctx: Context, rechargeId: string): Promise<void> {
     const telegramId = ctx.from?.id;
